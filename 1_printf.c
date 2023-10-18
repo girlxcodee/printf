@@ -1,10 +1,19 @@
 #include "main.h"
-
+/**
+ * _printf - Custom implementation of the printf function
+ * @format: The format string to process
+ * Description:
+ * This function processes a format string and produces output based on the
+ * provided format specifiers. It handles the %c, %s, %%, %d, and %i specifiers.
+ * It calls the _putchar function to print characters.
+ * Return:
+ * On success, the function returns the number of characters printed (excluding
+ * the null byte). If an error occurs, it returns -1 for a NULL format parameter.
+ */
 int _printf(const char *format, ...)
 {
     if (format == NULL)
-        return -1;
-
+        return -1; 
     int count = 0;
     va_list arg;
     va_start(arg, format);
@@ -18,7 +27,7 @@ int _printf(const char *format, ...)
 
             if (num < 0)
             {
-                write(1, "-", 1);
+                _putchar('-');
                 count++;
                 num = -num;
             }
@@ -38,14 +47,40 @@ int _printf(const char *format, ...)
                 num /= 10;
             }
 
-            write(1, num_str, num_len);
-            count += num_len;
+            for (int j = 0; j < num_len; j++)
+            {
+                _putchar(num_str[j]);
+                count++;
+            }
 
             i++;
         }
-        else if (format[i] != '%')
+        else if (format[i] == '%' && (format[i + 1] == 'c'))
         {
-            write(1, &format[i], 1);
+            char c = (char)va_arg(arg, int);
+            _putchar(c);
+            count++;
+            i++; // Skip the specifier character
+        }
+        else if (format[i] == '%' && (format[i + 1] == 's'))
+        {
+            char *str = va_arg(arg, char *);
+            for (int j = 0; str[j] != '\0'; j++)
+            {
+                _putchar(str[j]);
+                count++;
+            }
+            i++;
+        }
+        else if (format[i] == '%' && (format[i + 1] == '%'))
+        {
+            _putchar('%');
+            count++;
+            i++;
+        }
+        else
+        {
+            _putchar(format[i]);
             count++;
         }
     }
