@@ -1,20 +1,9 @@
 #include "main.h"
 
-/**
- * _printf - Custom implementation of the printf function
- * @format: The format string to process
- * Description:
- * This function processes a format string and produces output based on the
- * provided format specifiers. It handles the %d and %i specifiers and uses the
- * _putchar function to print characters.
- * Return:
- * On success, the function returns the number of characters printed (excluding
- * the null byte). If an error occurs, it returns -1 for a NULL format parameter.
- */
 int _printf(const char *format, ...)
 {
     if (format == NULL)
-        return -1; 
+        return -1;
 
     int count = 0;
     va_list arg;
@@ -25,32 +14,38 @@ int _printf(const char *format, ...)
         if (format[i] == '%' && (format[i + 1] == 'd' || format[i + 1] == 'i'))
         {
             int num = va_arg(arg, int);
-            char num_str[12];
             int num_len = 0;
 
             if (num < 0)
             {
-                num_str[num_len++] = '-';
+                write(1, "-", 1);
+                count++;
                 num = -num;
             }
 
+            int temp = num;
             do
             {
-                num_str[num_len++] = num % 10 + '0';
-                num /= 10;
-            } while (num > 0);
+                temp /= 10;
+                num_len++;
+            } while (temp);
+
+            char num_str[12];
 
             for (int j = num_len - 1; j >= 0; j--)
             {
-                _putchar(num_str[j]);
-                count++;
+                num_str[j] = num % 10 + '0';
+                num /= 10;
             }
+
+            write(1, num_str, num_len);
+            count += num_len;
 
             i++;
         }
         else if (format[i] != '%')
         {
-            _putchar(format[i]);
+            write(1, &format[i], 1);
             count++;
         }
     }
