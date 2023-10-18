@@ -5,52 +5,57 @@
  * @format: The format string to process
  * Description:
  * This function processes a format string and produces output based on the
- * provided format specifiers. It handles the %d and %i specifiers.
- * Return: always returns count if successful
- * an error occurs, it returns -1 for a NULL format parameter.
+ * provided format specifiers. It handles the %d and %i specifiers and uses the
+ * _putchar function to print characters.
+ * Return:
+ * On success, the function returns the number of characters printed (excluding
+ * the null byte). If an error occurs, it returns -1 for a NULL format parameter.
  */
 int _printf(const char *format, ...)
 {
-	int count = 0;
-	int i, j, num, num_len;
-	char num_str[12];
-	va_list arg;
-		va_start(arg, format);
+    if (format == NULL)
+        return -1; 
 
-	if (format == NULL)
-	return (-1);
-		for (i = 0; format[i] != '\0'; i++)
-	{
-		if (format[i] == '%' && (format[i + 1] == 'd' || format[i + 1] == 'i'))
-		{
-			num = va_arg(arg, int);
-			num_len = 0;
+    int count = 0;
+    va_list arg;
+    va_start(arg, format);
 
-			if (num < 0)
-			{
-				num_str[num_len++] = '-';
-				num = -num;
-			}
+    for (int i = 0; format[i] != '\0'; i++)
+    {
+        if (format[i] == '%' && (format[i + 1] == 'd' || format[i + 1] == 'i'))
+        {
+            int num = va_arg(arg, int);
+            char num_str[12];
+            int num_len = 0;
 
-			do {
-				num_str[num_len++] = num % 10 + '0';
-				num /= 10;
-			} while (num > 0);
+            if (num < 0)
+            {
+                num_str[num_len++] = '-';
+                num = -num;
+            }
 
-			for (int j = num_len - 1; j >= 0; j--)
-			{
-				write(1, &num_str[j], 1);
-				count++;
-			} i++;
-		}
-		else if (format[i] != '%')
-		{
-			write(1, &format[i], 1);
-			count++;
-			}
-		}
+            do
+            {
+                num_str[num_len++] = num % 10 + '0';
+                num /= 10;
+            } while (num > 0);
 
-	va_end(arg);
-	return (count);
+            for (int j = num_len - 1; j >= 0; j--)
+            {
+                _putchar(num_str[j]);
+                count++;
+            }
+
+            i++;
+        }
+        else if (format[i] != '%')
+        {
+            _putchar(format[i]);
+            count++;
+        }
+    }
+
+    va_end(arg);
+    return count;
 }
 
